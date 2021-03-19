@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UsbSimulator;
+using Handin2_LAdeskab;
 
 namespace Ladeskab
 {
@@ -22,7 +23,7 @@ namespace Ladeskab
         private LadeskabState _state;
         private IUsbCharger _charger;
         private int _oldId;
-       
+        //Mangler door
 
         private string logFile = "logfile.txt"; // Navnet på systemets log-fil
 
@@ -37,6 +38,7 @@ namespace Ladeskab
                     // Check for ladeforbindelse
                     if (_charger.Connected)
                     {
+
                         _door.LockDoor();
                         _charger.StartCharge();
                         _oldId = id;

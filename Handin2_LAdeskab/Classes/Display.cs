@@ -18,31 +18,31 @@ namespace Handin2_LAdeskab.Classes
 
         public void PhoneConnected()
         {
-            printer.PrintToConsole("\n Mobile phone is connected \n");
+            printer.PrintToConsole("\n The phone is connected \n");
         }
 
         public void FejlInPhoneConnection()
         {
-            printer.PrintToConsole("\n Fejl is detected, try igen \n");
+            printer.PrintToConsole("\n An error has been detected, try again \n");
         }
 
         public void RFIDMath()
         {
-            printer.PrintToConsole("\n RFID tag is readed\n");
+            printer.PrintToConsole("\n RFID tag is read\n");
         }
-         public
+         
         public void RFIDNotMatch()
         {
-            printer.PrintToConsole("\n RFID tag is fejled \n");
+            printer.PrintToConsole("\n RFID tag did not match. \n");
         }
 
         public void ChargingInProgress()
         {
-            printer.PrintToConsole("\n Mobile is charging \n");
+            printer.PrintToConsole("\n The phone charging is in progress \n");
         }
         public void NotCharging()
         {
-            printer.PrintToConsole("\n Mobile is not charging \n");
+            printer.PrintToConsole("\n The phone is not charging \n");
         }
         //public void CurentZero()
         //{
@@ -50,23 +50,22 @@ namespace Handin2_LAdeskab.Classes
         //}
         public void ChargingComplet()
         {
-            printer.PrintToConsole("\n Mobile is full charged \n");
+            printer.PrintToConsole("\n The phone is fully charged \n");
         }
 
         public void ChargingErorMsg()
         {
-            printer.PrintToConsole("\n ERROR! Charging stoppet \n");
+            printer.PrintToConsole("\n ERROR! Charging has stopped! \n");
         }
 
         public void StatusDoorLocked()
         {
-            printer.PrintToConsole("\n Door is looked\n");
+            printer.PrintToConsole("\n The door is looked \n");
         }
 
         public void StatusDoorUnLocked()
         {
-            printer.PrintToConsole("\n Door i unloked\n");
+            printer.PrintToConsole("\n The door is unlocked \n");
         }
     }
-}
 }
