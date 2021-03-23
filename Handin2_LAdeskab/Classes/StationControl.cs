@@ -6,30 +6,59 @@ using System.Text;
 using System.Threading.Tasks;
 using UsbSimulator;
 using Handin2_LAdeskab;
+using Handin2_LAdeskab.Interfaces;
+
 
 namespace Ladeskab
 {
     public class StationControl
     {
+
+        #region ENUM
         // Enum med tilstande ("states") svarende til tilstandsdiagrammet for klassen
-        private enum LadeskabState
+        public enum LadeskabState
         {
             Available,
             Locked,
             DoorOpen
         };
 
+        #endregion
+
+
+        #region MEMBER VARIABLER
         // Her mangler flere member variable
-        private LadeskabState _state;
         private IUsbCharger _charger;
+        private IDoor _door;
+        private IDisplay _display;
+        private IRFIDReader _RFIDReader;
         private int _oldId;
-        //Mangler door
 
         private string logFile = "logfile.txt"; // Navnet på systemets log-fil
+        #endregion
 
-        // Her mangler constructor
 
-        // Eksempel på event handler for eventet "RFID Detected" fra tilstandsdiagrammet for klassen
+        //Constructor
+        public StationControl(IUsbCharger charger, IDoor door, IDisplay display, IRFIDReader RFIDReader) //constructor
+        {
+            _charger = charger;
+            _door = door;
+            _display = display;
+            _RFIDReader = RFIDReader;
+
+            _door.DoorEvent += DoorEventHandler;
+          
+        }
+
+        #region PROPERTIES
+        //Properties
+        public LadeskabState _state { get; set; }
+
+        #endregion
+
+        #region EVENT HANDLERS
+
+        //RFID EVENT HANDLER
         private void RfidDetected(int id)
         {
             switch (_state)
@@ -82,8 +111,47 @@ namespace Ladeskab
 
                     break;
             }
-        }
+        }//end RFID detected
 
-        // Her mangler de andre trigger handlere
+        //DoorHandler 
+        private void DoorEventHandler(object sender, DoorEventArgs e)
+        {
+            switch(_state)
+            {
+                case LadeskabState.Available:
+                    if (e.DoorState==true) //If locker is available it can be opened
+                    {
+                        _state = LadeskabState.DoorOpen;
+                        _display.PhoneConnected();
+                    }
+                    else
+                    {
+                        throw new Exception("ERROR IN 'AVAILABLE'");
+                    }
+                    break;
+                case LadeskabState.Locked: //if locker is locked it cannot be opened
+                    {
+                        throw new Exception("ERROR IN 'LOCKED' DOOR IS LOCKED");
+                    }
+                case LadeskabState.DoorOpen: //If locker is closed it can be opened and is thus available
+                    if (e.DoorState==false)
+                    {
+                        _state = LadeskabState.Available;
+                        _display.RFIDMatch();
+                    }
+                    else
+                    {
+                        throw new Exception("ERROR IN 'DOOROPEN'");
+                    }
+                    break;
+                default:
+                    Console.WriteLine("DEFAULT STATE");
+                    break;
+
+
+            }
+
+        }//end Door handler
+        #endregion
     }
 }

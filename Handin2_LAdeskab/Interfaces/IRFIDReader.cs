@@ -8,7 +8,7 @@ namespace Handin2_LAdeskab
     {
        public int RFID { set; get; } //RFID id
     }
-    interface IRFIDReader
+   public interface IRFIDReader
     {
         event EventHandler<RFIDEventArgs> RFIDEvent; //Event triggers when value is changed
     }

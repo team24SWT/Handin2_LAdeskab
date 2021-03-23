@@ -26,7 +26,7 @@ namespace Handin2_LAdeskab.Classes
             printer.PrintToConsole("\n An error has been detected, try again \n");
         }
 
-        public void RFIDMath()
+        public void RFIDMatch()
         {
             printer.PrintToConsole("\n RFID tag is read\n");
         }

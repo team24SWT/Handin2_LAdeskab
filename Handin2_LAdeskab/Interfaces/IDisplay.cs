@@ -8,7 +8,7 @@ namespace Handin2_LAdeskab.Interfaces
     {
         void PhoneConnected();
         void FejlInPhoneConnection();
-        void RFIDMath();
+        void RFIDMatch();
         void RFIDNotMatch();
         void ChargingInProgress();
         void NotCharging();
