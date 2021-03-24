@@ -6,7 +6,7 @@ namespace Handin2_LAdeskab.Interfaces
 {
     public interface IDisplay
     {
-        void PhoneConnected();
+        void phoneConnect();
         void FejlInPhoneConnection();
         void RFIDMatch();
         void RFIDNotMatch();

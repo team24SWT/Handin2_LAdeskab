@@ -16,9 +16,9 @@ namespace Handin2_LAdeskab.Classes
             printer = printmsg;
         }
 
-        public void PhoneConnected()
+        public void phoneConnect()
         {
-            printer.PrintToConsole("\n The phone is connected \n");
+            printer.PrintToConsole("\n Connect your phone! \n");
         }
 
         public void FejlInPhoneConnection()
@@ -28,7 +28,7 @@ namespace Handin2_LAdeskab.Classes
 
         public void RFIDMatch()
         {
-            printer.PrintToConsole("\n RFID tag is read\n");
+            printer.PrintToConsole("\n Read your RFID tag \n");
         }
          
         public void RFIDNotMatch()
@@ -60,12 +60,13 @@ namespace Handin2_LAdeskab.Classes
 
         public void StatusDoorLocked()
         {
-            printer.PrintToConsole("\n The door is looked \n");
+            printer.PrintToConsole("\n The door is locked and phone is charging. Use your RFID to unlock. \n");
         }
 
         public void StatusDoorUnLocked()
         {
             printer.PrintToConsole("\n The door is unlocked \n");
         }
+
     }
 }
