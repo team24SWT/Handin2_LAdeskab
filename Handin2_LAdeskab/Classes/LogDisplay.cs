@@ -17,7 +17,6 @@ namespace Handin2_LAdeskab.Classes
                 sw.WriteLine(logMsg);
             }
 
-
         }
     }
 }

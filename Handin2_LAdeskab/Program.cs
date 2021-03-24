@@ -15,14 +15,14 @@ class Program
         Display _display = new Display(_printToDisplay);
         LogDisplay _logDisplay = new LogDisplay();
         Log _log = new Log(_logDisplay);
-        UsbChargerSimulator _charger = new UsbChargerSimulator();
+        UsbCharger _charger = new UsbCharger();
         StationControl stationControl = new StationControl(_charger, _door, _display, _rfid, _log);
 
             bool finish = false;
             do
             {
                 string input;
-                System.Console.WriteLine("Indtast E, O, C, R: ");
+                System.Console.WriteLine("Indtast (E) Exit, (O) Open, (C) Closed, (R) Read RFID: ");
                 input = Console.ReadLine();
                 if (string.IsNullOrEmpty(input)) continue;
 
