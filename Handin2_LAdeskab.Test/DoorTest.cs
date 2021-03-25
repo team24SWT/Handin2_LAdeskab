@@ -18,7 +18,7 @@ namespace Handin2_LAdeskab.Test
         {
             uut.DoorClosed();
             uut.DoorOpen();
-            Assert.IsFalse(uut.DoorState);
+            Assert.IsTrue(uut.DoorState);
         }
 
         [Test]
@@ -50,7 +50,7 @@ namespace Handin2_LAdeskab.Test
         {
             uut.LockDoor();
 
-            Assert.IsTrue(uut.LockState);
+            Assert.IsFalse(uut.LockState);
         }
 
         [Test]
@@ -61,7 +61,7 @@ namespace Handin2_LAdeskab.Test
             uut.LockDoor();
             uut.UnlockDoor();
 
-            Assert.That(uut.LockState, Is.False);
+            Assert.That(uut.LockState, Is.True);
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace Handin2_LAdeskab.Test
             uut.UnlockDoor();
             uut.UnlockDoor();
 
-            Assert.That(uut.LockState, Is.False);
+            Assert.That(uut.LockState, Is.True);
         }
 
         #endregion'
@@ -126,7 +126,7 @@ namespace Handin2_LAdeskab.Test
             uut.LockDoor();
 
            
-            Assert.IsFalse(uut.DoorState);
+            Assert.IsTrue(uut.DoorState);
         }
 
        
