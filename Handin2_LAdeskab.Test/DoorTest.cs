@@ -1,4 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Handin2_LAdeskab;
+using System.Xml.Linq;
 using NUnit.Framework;
+using Handin2_LAdeskab.Classes;
+using Handin2_LAdeskab.Interfaces;
 
 namespace Handin2_LAdeskab.Test
 {
