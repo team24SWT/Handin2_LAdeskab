@@ -35,7 +35,6 @@ namespace Ladeskab
         private int _oldId;
         private ILog _log;
 
-        private string logFile = "logfile.txt"; // Navnet på systemets log-fil
         #endregion
 
 
