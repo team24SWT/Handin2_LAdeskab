@@ -16,7 +16,8 @@ class Program
         LogDisplay _logDisplay = new LogDisplay();
         Log _log = new Log(_logDisplay);
         UsbCharger _charger = new UsbCharger();
-        StationControl stationControl = new StationControl(_charger, _door, _display, _rfid, _log);
+        ChargeControl _chargeControl = new ChargeControl(_display, _charger);
+        StationControl _stationControl = new StationControl(_charger, _door, _display, _rfid, _log);
 
             bool finish = false;
             do
