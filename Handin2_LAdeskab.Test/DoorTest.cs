@@ -77,7 +77,7 @@ namespace Handin2_LAdeskab.Test
 
         #endregion'
 
-        
+        #region Door open
         [Test]
         // Test of: open the door
         public void Door_Test_OpenDoor()
@@ -143,6 +143,7 @@ namespace Handin2_LAdeskab.Test
             
             Assert.IsFalse(uut.DoorState);
         }
+#endregion
     }
 
 
