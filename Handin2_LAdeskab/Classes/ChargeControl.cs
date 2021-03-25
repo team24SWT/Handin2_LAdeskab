@@ -22,7 +22,7 @@ namespace Handin2_LAdeskab.Classes
         private state _State = state.notCharging;
         private state _prevState = state.notCharging;
 
-
+        
 
     }
 }
