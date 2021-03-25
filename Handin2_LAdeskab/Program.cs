@@ -22,7 +22,13 @@ class Program
             do
             {
                 string input;
-                System.Console.WriteLine("Indtast (E) Exit, (O) Open, (C) Closed, (R) Read RFID: ");
+                System.Console.WriteLine(" -----------------------------------------\n\n "+
+                    " INDTAST FOR AT FORTAGE EN HANDLING\n " +
+                    "  E (Exit)\n " +
+                    "  O (Open)\n " +
+                    "  C (Closed)\n " +
+                    "  R (Read RFID)\n\n " +
+                    "-----------------------------------------");
                 input = Console.ReadLine();
                 if (string.IsNullOrEmpty(input)) continue;
 
