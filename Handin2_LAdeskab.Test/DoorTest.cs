@@ -126,7 +126,7 @@ namespace Handin2_LAdeskab.Test
             uut.LockDoor();
 
            
-            Assert.IsFalse(uut.DoorState);
+            Assert.IsTrue(uut.DoorState);
         }
 
        
