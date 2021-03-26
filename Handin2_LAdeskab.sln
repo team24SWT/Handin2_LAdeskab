@@ -7,7 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Handin2_LAdeskab", "Handin2
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Handin2_LAdeskab.Test", "Handin2_LAdeskab.Test\Handin2_LAdeskab.Test.csproj", "{281E5807-71DC-42B3-872F-E3E4C4070F4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handin2_LAskab.Applikation", "Handin2_LAskab.Applikation\Handin2_LAskab.Applikation.csproj", "{96112C9B-97B8-4B58-B812-DA4A47BE05EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Handin2_LAskab.Applikation", "Handin2_LAskab.Applikation\Handin2_LAskab.Applikation.csproj", "{96112C9B-97B8-4B58-B812-DA4A47BE05EA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{281E5807-71DC-42B3-872F-E3E4C4070F4B} = {281E5807-71DC-42B3-872F-E3E4C4070F4B}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
