@@ -6,7 +6,7 @@ using UsbSimulator;
 
 class Program
 {
-    static void Main(string[] args)
+    public static void  Main(string[] args)
     {
         // Assemble your system here from all the classes
         Door _door = new Door();

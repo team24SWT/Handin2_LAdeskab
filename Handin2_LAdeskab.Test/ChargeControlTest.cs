@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UsbSimulator;
+using System.Xml.Linq;
 
 namespace Handin2_LAdeskab.Test
 {
