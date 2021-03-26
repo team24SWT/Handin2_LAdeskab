@@ -6,7 +6,10 @@
     <IsPackable>false</IsPackable>
 
     <OutputType>Exe</OutputType>
+	
+	<GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
+	
 
   <ItemGroup>
     <PackageReference Include="NSubstitute" Version="4.2.2" />
@@ -16,11 +19,10 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
   </ItemGroup>
 
+    
   <ItemGroup>
     <ProjectReference Include="..\Handin2_LAdeskab\Handin2_LAdeskab.csproj" />
   </ItemGroup>
-	<PropertyGroup>
-		<GenerateProgramFile>false</GenerateProgramFile>
-	</PropertyGroup>
+	
 
 </Project>
