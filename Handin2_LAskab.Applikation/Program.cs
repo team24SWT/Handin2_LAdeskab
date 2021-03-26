@@ -63,7 +63,7 @@ class Program
                     break;
             }
 
-        } while (!finish);
+        } while (!finish); //test af push
     }
 }
 
