@@ -10,6 +10,7 @@ using Handin2_LAdeskab.Interfaces;
 
 namespace Handin2_LAdeskab.Test
 {
+    [TestFixture]
     class LogTest
     {
         private Log uut;
