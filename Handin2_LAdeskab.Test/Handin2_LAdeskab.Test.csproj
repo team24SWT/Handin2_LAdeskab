@@ -19,5 +19,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Handin2_LAdeskab\Handin2_LAdeskab.csproj" />
   </ItemGroup>
+	<PropertyGroup>
+		<GenerateProgramFile>false</GenerateProgramFile>
+	</PropertyGroup>
 
 </Project>
