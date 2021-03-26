@@ -6,7 +6,7 @@ namespace Handin2_LAdeskab
 {
     public class RFIDEventArgs : EventArgs
     {
-       public int RFID { set; get; } //RFID id
+       public int RFID { get; set; } //RFID id
     }
    public interface IRFIDReader
     {

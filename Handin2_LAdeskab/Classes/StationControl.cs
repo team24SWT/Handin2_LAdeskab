@@ -28,7 +28,7 @@ namespace Ladeskab
 
         #region MEMBER VARIABLER
         // Her mangler flere member variable
-        private IUsbCharger _charger;
+        private IChargeControl _charger;
         private IDoor _door;
         private IDisplay _display;
         private IRFIDReader _RFIDReader;
@@ -39,14 +39,15 @@ namespace Ladeskab
 
 
         //Constructor
-        public StationControl(IUsbCharger charger, IDoor door, IDisplay display, IRFIDReader RFIDReader, ILog log) //constructor
+        public StationControl(IChargeControl charger, IDoor door, IDisplay display, IRFIDReader RFIDReader, ILog log) //constructor
         {
-            _charger = charger;
             _door = door;
+            _charger = charger;
             _display = display;
             _RFIDReader = RFIDReader;
             _log = log;
 
+            _RFIDReader.RFIDEvent += RfidDetected;
             _door.DoorEvent += DoorEventHandler;
           
         }
@@ -60,18 +61,18 @@ namespace Ladeskab
         #region EVENT HANDLERS
 
         //RFID EVENT HANDLER
-        private void RfidDetected(int id)
+        private void RfidDetected(object sender, RFIDEventArgs e)
         {
             switch (_state)
             {
                 case LadeskabState.Available:
                     // Check for ladeforbindelse
-                    if (_charger.Connected)
+                    if (_charger.connected())
                     {
 
                         _door.LockDoor();
-                        _charger.StartCharge();
-                        _oldId = id;
+                        _charger.startCharging();
+                        _oldId = e.RFID;
                         _log.LockerLocklog(_oldId);
                         _display.StatusDoorLocked();
                         _state = LadeskabState.Locked;
@@ -85,28 +86,32 @@ namespace Ladeskab
 
                 case LadeskabState.DoorOpen:
                     // Ignore
-                    break;
+                    throw new System.Exception("ERROR! DOOR IS OPEN!!!!");
 
                 case LadeskabState.Locked:
                     // Check for correct ID
-                    if (id == _oldId)
-                    {
-                        _charger.StopCharge();
-                        _door.UnlockDoor();
-                        _log.LockerUnlockLog(_oldId);
-
-                        _display.ChargingComplet();
-                        _state = LadeskabState.Available;
-                    }
-                    else
-                    {
-                        _display.RFIDNotMatch();
-                    }
+                    CheckId(_oldId, e.RFID);
 
                     break;
             }
         }//end RFID detected
 
+        private void CheckId(int _oldId, int id)
+        {
+            if (id == _oldId)
+            {
+                _charger.stopCharging();
+                _door.UnlockDoor();
+                _log.LockerUnlockLog(id);
+
+                _display.StatusDoorUnLocked();
+                _state = LadeskabState.Available;
+            }
+            else
+            {
+                _display.RFIDNotMatch();
+            }
+        }
         //DoorHandler 
         private void DoorEventHandler(object sender, DoorEventArgs e)
         {

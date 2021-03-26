@@ -63,9 +63,10 @@ namespace Handin2_LAdeskab.Classes
         {
             _current = e.Current;
             readCurrent = _current;
-
+          
             checkChargerState();
             sendToDisplay();
+            
         }
 
         private void checkChargerState()
@@ -101,10 +102,11 @@ namespace Handin2_LAdeskab.Classes
         {
             if (_prevState == _State)
             {
+                
                 if (_State == state.charging)
                 {
                     var chargingProgress = (((500 - (int)readCurrent) * 100) / 495);
-                    Console.Write("\r Progress: {0} / 100%", chargingProgress);
+                    Console.Write("\r Progress: {0} / 100 %        Press (R) to read RFID and cancel the the charging process!", chargingProgress);
                 }
                 return;
             }

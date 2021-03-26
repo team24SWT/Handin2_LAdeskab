@@ -17,19 +17,22 @@ class Program
         Log _log = new Log(_logDisplay);
         UsbCharger _charger = new UsbCharger();
         ChargeControl _chargeControl = new ChargeControl(_display, _charger);
-        StationControl _stationControl = new StationControl(_charger, _door, _display, _rfid, _log);
+        StationControl _stationControl = new StationControl(_chargeControl, _door, _display, _rfid, _log);
 
         bool finish = false;
+        string input;
+        System.Console.WriteLine(" -----------------------------------------\n\n " +
+            " INDTAST FOR AT FORTAGE EN HANDLING\n " +
+            "  E (Exit)\n " +
+            "  O (Open)\n " +
+            "  C (Closed)\n " +
+            "  R (Read RFID)\n " +
+            "  G (Guide)\n\n" +
+            "-----------------------------------------");
+        
+        
         do
         {
-            string input;
-            System.Console.WriteLine(" -----------------------------------------\n\n " +
-                " INDTAST FOR AT FORTAGE EN HANDLING\n " +
-                "  E (Exit)\n " +
-                "  O (Open)\n " +
-                "  C (Closed)\n " +
-                "  R (Read RFID)\n\n " +
-                "-----------------------------------------");
             input = Console.ReadLine();
             if (string.IsNullOrEmpty(input)) continue;
 
@@ -59,9 +62,23 @@ class Program
                     _rfid.OnRfidRead(id);
                     break;
 
+                case 'G':
+                case 'g':
+                    System.Console.WriteLine(" -----------------------------------------\n\n " +
+                        " 1. Open the door of the Ladeskab\n " +
+                        " 2. Insert your phone into the Ladeskab\n " +
+                        " 3. Connect your phone to the USB charger inside the Ladeskab\n " +
+                        " 4. CLose the door of the Ladeskab\n " +
+                        " 5. Read your RFID tag on the RFID-Reader\n " +
+                        " !!Congratulations! Your phone is now charging!!\n\n" +
+                        " Note: To remove your phone from the Ladeskab read your RFID tag on the RFID Reader and open the door to the Ladeskab\n\n" +
+                        "-----------------------------------------");
+                    break;
+
                 default:
                     break;
             }
+
 
         } while (!finish); //test af push
     }
