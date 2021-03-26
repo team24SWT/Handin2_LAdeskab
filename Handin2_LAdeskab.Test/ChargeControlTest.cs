@@ -9,7 +9,7 @@ using UsbSimulator;
 
 namespace Handin2_LAdeskab.Test
 {
-    [TestFixture]
+   
     public class ChargeControlTest
     {
         private ChargeControl uut;
