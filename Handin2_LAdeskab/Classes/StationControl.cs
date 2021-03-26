@@ -54,7 +54,7 @@ namespace Ladeskab
 
         #region PROPERTIES
         //Properties
-        private LadeskabState _state { get; set; }
+        public LadeskabState _state { get; set; }
 
         #endregion
 
