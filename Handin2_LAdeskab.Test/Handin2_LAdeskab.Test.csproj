@@ -6,8 +6,8 @@
     <IsPackable>false</IsPackable>
 
     <OutputType>Exe</OutputType>
-	
-	<GenerateProgramFile>false</GenerateProgramFile>
+
+	  <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
 	
 
