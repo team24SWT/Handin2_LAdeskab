@@ -7,6 +7,7 @@ using Handin2_LAdeskab.Classes;
 using Handin2_LAdeskab.Interfaces;
 using NSubstitute;
 using Ladeskab;
+using NSubstitute.ExceptionExtensions;
 
 namespace Handin2_LAdeskab.Test
 {
@@ -30,38 +31,9 @@ namespace Handin2_LAdeskab.Test
             ChargeFake = Substitute.For<IChargeControl>();
             RFIDfake = Substitute.For<IRFIDReader>();
             uut = new StationControl(ChargeFake, DoorFake, DisplayFake, RFIDfake, logFake);
-
-
         }
 
         #region DoorEventH
-
-        [Test]
-        //Test of: When door events the door is open
-        public void DoorEventHandler_DoorOpen_StateChange()
-        {
-
-            uut._state = StationControl.LadeskabState.Available;
-
-
-            DoorFake.DoorEvent += Raise.EventWith(new DoorEventArgs() { DoorState = true });
-
-            Assert.That(uut._state, Is.EqualTo(StationControl.LadeskabState.DoorOpen));
-
-        }
-
-        [Test]
-        public void DoorEventHandler_DoorOpen_Display()
-        {
-            uut._state = StationControl.LadeskabState.Available;
-
-            DoorFake.DoorEvent += Raise.EventWith(new DoorEventArgs() { DoorState = true });
-
-            DisplayFake.Received(1).phoneConnect();
-            DisplayFake.Received(0).RFIDMatch();
-
-
-        }
 
         [Test]
         public void DoorEventHandler_DoorStateDoorOpen_Throws()
@@ -70,7 +42,6 @@ namespace Handin2_LAdeskab.Test
             uut._state = StationControl.LadeskabState.DoorOpen;
             void throwingFunc()
             {
-
                 DoorFake.DoorEvent += Raise.EventWith(new DoorEventArgs() { DoorState = true });
             }
 
@@ -82,7 +53,6 @@ namespace Handin2_LAdeskab.Test
         {
 
             uut._state = StationControl.LadeskabState.Locked;
-
 
             void throwingFunc()
             {
@@ -116,138 +86,42 @@ namespace Handin2_LAdeskab.Test
         public void DoorEventHandler_DoorCloseStateDoorOpen_stateChangesAvailable()
         {
 
-            uut._state = StationControl.LadeskabState.DoorOpen;
-
-
+            DoorFake.DoorEvent += Raise.EventWith(new DoorEventArgs() { DoorState = true });
             DoorFake.DoorEvent += Raise.EventWith(new DoorEventArgs() { DoorState = false });
 
-
             Assert.That(uut._state, Is.EqualTo(StationControl.LadeskabState.Available));
+        }
+
+        #endregion
+
+        #region DoorEventBlackBoxTests
+
+        [Test]
+        public void DoorEventHandler_DoorOpen_Display()
+        {
+            DoorFake.DoorEvent += Raise.EventWith(new DoorEventArgs() { DoorState = true });
+
+            DisplayFake.Received(1).phoneConnect();
+            DisplayFake.Received(0).RFIDMatch();
         }
 
         [Test]
         public void DoorEventHandler_DoorCloseStateDoorOpen_Display()
         {
 
-            uut._state = StationControl.LadeskabState.DoorOpen;
-
-
+            DoorFake.DoorEvent += Raise.EventWith(new DoorEventArgs() { DoorState = true });
             DoorFake.DoorEvent += Raise.EventWith(new DoorEventArgs() { DoorState = false });
 
-
-            DisplayFake.Received(0).phoneConnect();
             DisplayFake.Received(1).RFIDMatch();
         }
-
-        [Test]
-        public void DoorEventHandler_DoorCloseStateLocked_Throws()
-        {
-
-            uut._state = StationControl.LadeskabState.Locked;
-
-            void throwingFunc()
-            {
-
-                DoorFake.DoorEvent += Raise.EventWith(new DoorEventArgs() { DoorState = false });
-            }
-            // Assert
-            Assert.Throws(typeof(System.Exception), throwingFunc);
-        }
-
         #endregion
 
         #region RFID - Detect
 
         [Test]
-        //Test of: rfid events is received state=Available
-        public void RFIDDetected_StateAvailableChargerConnected_DoorCalledOnce()
-        {
-
-            uut._state = StationControl.LadeskabState.Available;
-            ChargeFake.connected().Returns(true);
-
-
-            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 1 });
-
-
-            DoorFake.Received(1).LockDoor();
-        }
-
-        [Test]
-        public void RFIDDetected_StateAvailableChargerConnected_ChargerCalled()
-        {
-
-            uut._state = StationControl.LadeskabState.Available;
-            ChargeFake.connected().Returns(true);
-
-
-            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 1 });
-
-
-            ChargeFake.Received(1).startCharging();
-        }
-
-        [Test]
-        public void RFIDDetected_StateAvailableChargerConnected_LogDoorLockedCalled()
-        {
-
-            uut._state = StationControl.LadeskabState.Available;
-            ChargeFake.connected().Returns(true);
-
-
-            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 10 });
-
-
-            logFake.Received(1).LockerLocklog(10);
-        }
-
-        [Test]
-        public void RFIDDetected_StateAvailableChargerConnected_DisplayCalled()
-        {
-
-            uut._state = StationControl.LadeskabState.Available;
-            ChargeFake.connected().Returns(true);
-
-
-            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 1 });
-
-
-            DisplayFake.Received(1).StatusDoorLocked();
-        }
-
-        [Test]
-        public void RFIDDetected_StateAvailableChargerConnected_StateChanges()
-        {
-
-            uut._state = StationControl.LadeskabState.Available;
-            ChargeFake.connected().Returns(true);
-
-
-            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 1 });
-
-
-            Assert.That(uut._state, Is.EqualTo(StationControl.LadeskabState.Locked));
-        }
-
-        [Test]
-        public void RFIDDetected_StateAvailableChargerNotConnected_DisplayCalled()
-        {
-
-            uut._state = StationControl.LadeskabState.Available;
-            ChargeFake.connected().Returns(false);
-
-
-            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 1 });
-
-            DisplayFake.Received(1).FejlInPhoneConnection();
-        }
-
-
-        [Test]
         //Tests of: RFID events is received state Door Open
         public void RFIDDetected_StateDoorOpen_Throws()
         {
-
             uut._state = StationControl.LadeskabState.DoorOpen;
             ChargeFake.connected().Returns(false);
 
@@ -260,76 +134,9 @@ namespace Handin2_LAdeskab.Test
             Assert.Throws(typeof(System.Exception), throwingFunc);
         }
 
-
-        [TestCase(12, 12, 1)]
-        [TestCase(12, 13, 0)]
-        //Test of: simulate an entire open amd close cycle
-        public void RFIDDetected_FullCycleSim_DisplayCalls(int id1, int id2, int res)
-        {
-
-            uut._state = StationControl.LadeskabState.Available;
-            ChargeFake.connected().Returns(true);
-
-
-            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = id1 });
-            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = id2 });
-
-
-            DisplayFake.Received(res).StatusDoorUnLocked();
-        }
-
-        [TestCase(12, 12, 1)]
-        [TestCase(12, 13, 0)]
-        public void RFIDDetected_FullCycle_CallsCharger(int id1, int id2, int res)
-        {
-
-            uut._state = StationControl.LadeskabState.Available;
-            ChargeFake.connected().Returns(true);
-
-
-            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = id1 });
-            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = id2 });
-
-
-            ChargeFake.Received(res).stopCharging();
-        }
-
-        [TestCase(12, 12, 1)]
-        [TestCase(12, 13, 0)]
-        public void RFIDDetected_FullCycle_CallsDoor(int id1, int id2, int res)
-        {
-
-            uut._state = StationControl.LadeskabState.Available;
-            ChargeFake.connected().Returns(true);
-
-
-            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = id1 });
-            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = id2 });
-
-            // Assert
-            DoorFake.Received(res).UnlockDoor();
-        }
-
-        [TestCase(12, 12, 1)]
-        [TestCase(12, 13, 0)]
-        public void RFIDDetected_FullCycle_CallsLogfile(int id1, int id2, int res)
-        {
-
-            uut._state = StationControl.LadeskabState.Available;
-            ChargeFake.connected().Returns(true);
-
-
-            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = id1 });
-            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = id2 });
-
-
-            logFake.Received(res).LockerUnlockLog(id2);
-        }
-
         [Test]
         public void RFIDDetected_FullCycleSim_RFIDMatchStateChangesBack()
         {
-
             uut._state = StationControl.LadeskabState.Available;
             ChargeFake.connected().Returns(true);
 
@@ -343,33 +150,215 @@ namespace Handin2_LAdeskab.Test
         [Test]
         public void RFIDetected_FullCycleSimNo_RFIDMatchStateChangesBack()
         {
-
             uut._state = StationControl.LadeskabState.Available;
             ChargeFake.connected().Returns(true);
 
-
             RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 12 });
             RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 13 });
-
 
             Assert.That(uut._state, Is.EqualTo(StationControl.LadeskabState.Locked));
         }
-        [Test]
-        public void RFIDDetected_FullCycleSimNo_RFIDMatch_DisplayCalled()
-        {
 
-            uut._state = StationControl.LadeskabState.Available;
+
+        #endregion
+
+        #region RFID BlackBoxTest
+                
+        [Test]
+        public void RFIDDetected_StateAvailableChargerConnected_ChargerCalled()
+        {
             ChargeFake.connected().Returns(true);
 
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 1 });
+
+            ChargeFake.Received(1).startCharging();
+        }
+
+        [Test]
+        public void RFIDDetected_StateAvailableChargerConnected_LogDoorLockedCalled()
+        {
+            ChargeFake.connected().Returns(true);
+
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 10 });
+
+            logFake.Received(1).LockerLocklog(10);
+        }
+
+        [Test]
+        public void RFIDDetected_StateAvailableChargerConnected_DisplayCalled()
+        {
+            ChargeFake.connected().Returns(true);
+
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 1 });
+
+            DisplayFake.Received(1).StatusDoorLocked();
+        }
+
+        [Test]
+        public void RFIDDetected_StateAvailableChargerNotConnected_DisplayCalled()
+        {
+            ChargeFake.connected().Returns(false);
+
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 1 });
+
+            DisplayFake.Received(1).FejlInPhoneConnection();
+        }
+
+        [Test]
+        //Test of: simulate an entire open and close cycle
+        public void RFIDDetected_FullCycleSim_DisplayCalls_succes()
+        {
+            ChargeFake.connected().Returns(true);
+
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 12 });
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 12 });
+
+            DisplayFake.Received(1).StatusDoorUnLocked();
+        }
+
+        [Test]
+        //Test of: simulate an entire open and close cycle
+        public void RFIDDetected_FullCycleSim_DisplayCalls_fail()
+        {
+            ChargeFake.connected().Returns(true);
 
             RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 12 });
             RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 13 });
 
+            DisplayFake.Received(0).StatusDoorUnLocked();
+        }
+
+        [Test]
+        public void RFIDDetected_FullCycle_CallsCharger_success()
+        {
+            ChargeFake.connected().Returns(true);
+
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 12 });
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 12 });
+
+            ChargeFake.Received(1).stopCharging();
+        }
+
+        [Test]
+        public void RFIDDetected_FullCycle_CallsCharger_fail()
+        {
+            ChargeFake.connected().Returns(true);
+
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 12 });
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 13 });
+
+            ChargeFake.Received(0).stopCharging();
+        }
+
+        [Test]
+        public void RFIDDetected_FullCycle_CallsDoor_success()
+        {
+            ChargeFake.connected().Returns(true);
+
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 12 });
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 12 });
+
+            // Assert
+            DoorFake.Received(1).UnlockDoor();
+        }
+
+        [Test]
+        public void RFIDDetected_FullCycle_CallsDoor_fail()
+        {
+            ChargeFake.connected().Returns(true);
+
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 12 });
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 13 });
+
+            // Assert
+            DoorFake.Received(0).UnlockDoor();
+        }
+
+        [Test]
+        public void RFIDDetected_FullCycle_CallsLogfile_CorrectID()
+        {
+            ChargeFake.connected().Returns(true);
+
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 12 });
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 12 });
+
+            logFake.Received(1).LockerUnlockLog(12);
+        }
+
+        [Test]
+        public void RFIDDetected_FullCycle_DoesNotCallLog_WrongID()
+        {
+            ChargeFake.connected().Returns(true);
+
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 12 });
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 13 });
+
+            logFake.Received(0).LockerUnlockLog(13);
+        }
+
+        [Test]
+        public void RFIDDetected_FullCycleSimNo_RFIDMatch_DisplayCalled()
+        {
+            ChargeFake.connected().Returns(true);
+
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 12 });
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 13 });
 
             DisplayFake.Received(1).RFIDNotMatch();
         }
-
         #endregion
 
+        #region RFID BVA & EP
+        [TestCase(1)]
+        [TestCase(20)]
+        [TestCase(213)]
+        [TestCase(5832)]
+        [TestCase(9999)]
+        //Test of: rfid events is received state=Available
+        public void RFIDDetected_StateAvailableChargerConnected_DoorCalledOnce(int detectedRFID)
+        {
+            ChargeFake.connected().Returns(true);
+
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = detectedRFID });
+
+            DoorFake.Received(1).LockDoor();
+        }
+
+        [TestCase(-5674)]
+        [TestCase(-10)]
+        [TestCase(-1)]
+        [TestCase(0)]
+        public void RFIDDetected_RFID_IsBelowLimit(int detectedRFID)
+        {
+            ChargeFake.connected().Returns(true);
+
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = detectedRFID });
+
+            DoorFake.Received(0).LockDoor();
+        }
+
+        [Test]
+        public void RFIDDetected_RFID_IsAtMaxLimit()
+        {
+            ChargeFake.connected().Returns(true);
+
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 10000 });
+
+            DoorFake.Received(1).LockDoor();
+        }
+
+        [TestCase(10001)]
+        [TestCase(10231)]
+        [TestCase(23123)]
+        [TestCase(1645888)]
+        public void RFIDDetected_RFID_IsAboveGivenLimit(int detectedRFID)
+        {
+            ChargeFake.connected().Returns(true);
+
+            RFIDfake.RFIDEvent += Raise.EventWith(new RFIDEventArgs() { RFID = detectedRFID });
+
+            DoorFake.Received(0).LockDoor();
+        }
+        #endregion
     }
 }

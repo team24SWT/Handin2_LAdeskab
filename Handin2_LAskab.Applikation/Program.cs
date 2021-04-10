@@ -59,7 +59,12 @@ class Program
                     string idString = System.Console.ReadLine();
 
                     int id = Convert.ToInt32(idString);
-                    _rfid.OnRfidRead(id);
+                    if (id > 0)
+                    {
+                        _rfid.OnRfidRead(id);
+                    }
+                    else System.Console.WriteLine("RFID er ugyldigt! RFID kan ikke være et negativt tal eller over 10.000!");
+                    
                     break;
 
                 case 'G':

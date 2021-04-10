@@ -67,7 +67,7 @@ namespace Ladeskab
             {
                 case LadeskabState.Available:
                     // Check for ladeforbindelse
-                    if (_charger.connected())
+                    if (_charger.connected() && e.RFID > 0 && e.RFID <= 10000)
                     {
 
                         _door.LockDoor();
