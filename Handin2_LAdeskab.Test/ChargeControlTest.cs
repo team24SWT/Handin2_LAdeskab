@@ -10,7 +10,7 @@ using System.Xml.Linq;
 
 namespace Handin2_LAdeskab.Test
 {
-   
+    [TestFixture]
     public class ChargeControlTest
     {
         private ChargeControl uut;
@@ -67,86 +67,69 @@ namespace Handin2_LAdeskab.Test
 
         #region _Charger_CurrentValueEvent()
 
-        [Test]
-        public void CurrentValueEventReceived()
+        [TestCase(200.0)]
+        public void CurrentValueEventReceived(double currentAdded)
         {
-            testCharger.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = 200.0 });
+            testCharger.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = currentAdded });
 
-            Assert.That(uut.readCurrent, Is.EqualTo(200.0));
+            Assert.That(uut.readCurrent, Is.EqualTo(currentAdded));
   
         }
         #endregion
 
         #region checkCurrentTest
 
-        [TestCase(0.0, 0)]
-        [TestCase(0.1, 1)]
-        [TestCase(5.0, 1)]
-        [TestCase(5.1, 2)]
-        [TestCase(500.0, 2)]
-        [TestCase(500.1, 3)]
-        public void CheckCurrentTest_ChargerStateChanges(double currentAdded, int state)
+        [TestCase(0.0)]
+        public void CheckCurrentTest_NothingDisplayedWhenNoCurrentIsAdded(double currentAdded)
         {
             testCharger.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = currentAdded });
-
-            Assert.That(uut.chargerState, Is.EqualTo(state));
+            testDisplay.Received(0);
+        }
+        [TestCase(0.1)]
+        [TestCase(5.0)]
+        public void CheckCurrentTest_ChargerStateChangesWhenCurrentFullyCharged(double currentAdded)
+        {
+            testCharger.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = currentAdded });
+            testDisplay.Received(1).ChargingComplet();
         }
 
-        [Test]
-        public void StopChargeCalledWhenCurrentOverMaxLimit()
+        [TestCase(5.1)]
+        [TestCase(60.0)]
+        [TestCase(500.0)]
+        public void CheckCurrentTest_ChargerStateChangesWhenCurrentCharging(double currentAdded)
         {
-            testCharger.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = 550.0 });
+            testCharger.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = currentAdded });
+            testDisplay.Received(1).ChargingInProgress();
+        }
 
+        [TestCase(500.1)]
+        public void CheckCurrentTest_ChargerStateChangesWhenCurrentOverload(double currentAdded)
+        {
+            testCharger.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = currentAdded });
+            testDisplay.Received(1).ChargingErorMsg();
+            
+        }
+
+        [TestCase(550.0)]
+        public void StopChargeCalledWhenCurrentOverMaxLimit(double currentAdded)
+        {
+            testCharger.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = currentAdded });
             testCharger.Received(1).StopCharge();
         }
         #endregion
 
         #region sendToDisplay()
 
-        [Test]
-        public void DisplayToScreen_StateFromChargingToNotCharging()
+        [TestCase(200.0, 0.0)]
+        public void DisplayToScreen_StateFromChargingToNotCharging(double currentAdded, double nextCurrentAdded)
         {
-            testCharger.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = 200.0 });
+            testCharger.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = currentAdded});
+            testDisplay.Received(1).ChargingInProgress();
 
-            testCharger.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = 0.0 });
-
-            Assert.That(uut.chargerState, Is.EqualTo((int)0));
+            testCharger.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = nextCurrentAdded });
+            testDisplay.Received(1).NotCharging();
         }
-
-        
-        [TestCase(100, 1, 0, 0)]
-        [TestCase(4, 0, 1, 0)]
-        [TestCase(600, 0, 0, 1)]
-        public void ChangeStateIsCalledWhenChangingCurrent(double currentChange, int a, int b, int c)
-        {
-            testCharger.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = currentChange });
-
-            //Not charging is not checked as the default state is "notCharging" and is not called
-            testDisplay.Received(a).ChargingInProgress();
-            testDisplay.Received(b).ChargingComplet();
-            testDisplay.Received(c).ChargingErorMsg();
-
-        }
-
-        [TestCase(7, 100, 7, 0, 0)]
-        [TestCase(10, 3, 0, 10, 0)]
-        [TestCase(20, 600, 0, 0, 20)]
-        public void ChangeStateIsCalledOnceForEveryAmountOfEvents(int eventAmount, double currentChange, int a, int b, int c)
-        {
-
-            for (int i = 0; i < eventAmount; i++)
-            {
-                testCharger.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = currentChange });
-            }
-
-            testDisplay.Received(a / eventAmount).ChargingInProgress();
-            testDisplay.Received(b / eventAmount).ChargingComplet();
-            testDisplay.Received(c / eventAmount).ChargingErorMsg();
-
-        }
-
-
-
+ 
         #endregion
     }
 }
